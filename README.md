@@ -1,6 +1,6 @@
 # 463-Project-1
 
-# 🧠 Overview
+# Overview
 # This project performs time-series clustering on short physiological signals (ABP segments) using:
 - A divide and conquer recursive clustering strategy.
 - A closest pair algorithm for validating cluster cohesion.
