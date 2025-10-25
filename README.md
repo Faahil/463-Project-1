@@ -1,41 +1,51 @@
-# 463-Project-1
+# Ali – CMPSC 463 – Project 1
+## Time Series Clustering and Segment Analysis on PulseDB Using Divide and Conquer Algorithms
 
-# Overview
-# This project performs time-series clustering on short physiological signals (ABP segments) using:
-- A divide and conquer recursive clustering strategy.
-- A closest pair algorithm for validating cluster cohesion.
-- Kadane’s algorithm for detecting high-activity intervals.
+This project performs time series clustering and analysis on short Arterial Blood Pressure segments from the PulseDB dataset. It focuses on using classical algorithmic design instead of machine learning to group, compare, and interpret physiological data in a clear and explainable way.
 
-# this program will:
-- Loads 10s ABP segments from a VitalDB `.mat` file
-- Clusters segments via a simple divide-and-conquer split (no ML libs)
-- Finds the closest pair in each cluster
-- Runs Kadane’s algorithm on first-difference to find “active” intervals
-- Shows quick matplotlib plots
+The program reads PulseDB’s ten second ABP signals, normalizes them, and applies a divide and conquer method to form clusters based on similarity. Inside each cluster, it finds the most similar pair of signals to measure cohesion and uses Kadane’s algorithm to highlight the most active interval within each signal. Together, these steps create a complete and understandable pipeline that shows why certain signals belong together instead of grouping them blindly.
 
-# Quick start
-1. Install Python 3.10+
-2. Open the main script in VS Code and set:
-DataPath = r"C:\Users\faa32\Downloads\VitalDB_CalBased_Test_Subset.mat" (you would need to input your own path for your data set)
-3. Run the file, Plots will pop up.
-4. Optional toy demo
+## How to Run the Project
 
-# Installation
-bash
-pip install -r requirements.txt
+Make sure you have Python 3.10 or newer installed on your computer. Then follow these steps:
 
-Required packages: 
-- numpy
-- matplotlib
-- h5py
+1) Install the required libraries by running
+```bash
+pip install -r requirements.txt 
+```
+This installs numpy, matplotlib, and h5py.
 
-The script prints:
-- Cluster summary table
-- Closest pair stats
-- Kadane activity intervals
-- 1–2 plots of closest pairs with shaded active regions
+2) Open the file named Ali – CMPSC 463 – Project 1.py in your code editor.
 
-# Example Output:
+3) Change the line that sets DataPath so it points to your PulseDB file. For example:
+```python
+DataPath = r"C:\Users\faa32\Downloads\VitalDB_CalBased_Test_Subset.mat"
+```
+
+4) Save the file and run it in the terminal with
+```
+python "Ali - CMPSC 463 – Project 1.py"
+```
+
+5) The program will print progress updates, cluster information, closest pair results, and then show a few visual plots of the signals.
+
+If you want to test the algorithms without using the PulseDB dataset, set
+```python
+ShowToyCheck = True
+```
+
+at the top of the script. When you run it again, it will generate a small example to verify that all algorithms are working correctly.
+
+## What the Program Does
+
+When the program runs, it loads up to 1000 ABP segments from the dataset and normalizes each signal so they can be compared fairly. It then performs recursive clustering using a divide and conquer strategy, finding the most similar pair of signals inside each cluster to measure how cohesive it is. Kadane’s algorithm runs on each signal to detect the most active time interval where the waveform changes the most.
+
+The results are printed in the console and shown in a few simple plots that display the closest pairs and their highlighted active regions. The output includes a short summary of how many clusters were created, the distance between signals, and timing results for each step.
+
+## Example Output:
+
+Below are some sample figures that show the output. The shaded parts mark the active intervals found by Kadane’s algorithm while the overlapping lines represent the closest pair in a cluster.
+
 <img width="1290" height="942" alt="image" src="https://github.com/user-attachments/assets/5b26b69a-b3f5-44d9-962a-0fd701c44aa9" />
 
 <img width="448" height="316" alt="image" src="https://github.com/user-attachments/assets/911fdcfc-619c-4c88-bc97-57aedd33ce5d" />
@@ -44,5 +54,14 @@ The script prints:
 
 <img width="1998" height="778" alt="image" src="https://github.com/user-attachments/assets/e27480cd-03fd-4e30-98f6-d432d2d9336d" />
 
+---
 
+## Files Included
 
+- Ali – CMPSC 463 – Project 1.py contains all logic and algorithms.
+- Report.md is the written project report with full details and discussion.
+- requirements.txt lists the libraries needed to run the program.
+- README.md is this setup and overview guide.
+
+## Credits
+ABP data is from the open PulseDB dataset available through VitalDB and Kaggle.
