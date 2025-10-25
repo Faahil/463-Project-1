@@ -1,6 +1,7 @@
-# Ali – CMPSC 463 – Project 1
+# Time-Series Clustering and Segment Analysis on PulseDB Using Divide-and-Conquer Algorithms
 
-# Title: Time-Series Clustering and Segment Analysis on PulseDB Using Divide-and-Conquer Algorithms
+**Author:** Faahil Ali  
+**Course:** CMPSC 463 — Project 1
 
 ## Description of Project
 
@@ -10,11 +11,19 @@ This project clusters and analyzes short biomedical time-series segments from th
 
 ## Installation and Usage
 
-The code runs with Python version 3.10 or newer and needs numpy, matplotlib, and h5py. After installing these packages with pip install -r requirements.txt, open the file named Ali – CMPSC 463 – Project 1.py in your editor and set the DataPath variable to the location of your VitalDB mat file. For example you can set DataPath to C:\Users\faa32\Downloads\VitalDB_CalBased_Test_Subset.mat. Save the file and run it from a terminal with python "Ali - CMPSC 463 – Project 1.py". The program prints a short summary of clusters, closest pair distances, and Kadane intervals, and it opens one or two simple plots that overlay the closest pair in a cluster with the active windows shaded. If you want to verify the algorithms without a dataset, set ShowToyCheck to True and run the script to see a small synthetic demo.
+### Requirements
+- Python 3.10+
+- Packages: `numpy`, `matplotlib`, `h5py`
+  
+The code runs with Python version 3.10 or newer and needs `numpy`, `matplotlib`, and `h5py`. After installing these packages with pip install -r requirements.txt, open the file named `Ali – CMPSC 463 – Project 1.py` in your editor and set the `DataPath` variable to the location of your VitalDB mat file. For example you can set DataPath to 
+```python 
+C:\Users\faa32\Downloads\VitalDB_CalBased_Test_Subset.mat.
+```
+Save the file and run it from a terminal with python `Ali - CMPSC 463 – Project 1.py`. The program prints a short summary of clusters, closest pair distances, and Kadane intervals, and it opens one or two simple plots that overlay the closest pair in a cluster with the active windows shaded. If you want to verify the algorithms without a dataset, set `ShowToyCheck` to True and run the script to see a small synthetic demo.
 
 ## Structure of Code
 
-Everything is in a single file called Ali – CMPSC 463 – Project 1.py. The data is loaded and trimmed by LoadAbpSegmentsFromMat which reads ABP from the Subset group inside the mat file and makes sure every segment has the same length. NormalizeSegments performs a z score per segment so that distance calculations are fair. The program measures similarity with correlation distance by default and also includes a simple DTW option for small tests. The divide and conquer clustering is implemented by SplitCluster, RecursiveCluster, and RunClustering which repeatedly split groups until they reach size or depth limits. Inside each final cluster the function FindClosestPair searches for the most similar pair which is used as a quick cohesion check and as a representative example. To find where a signal is most active the code runs Kadane on the first difference using Kadane and GetActivePart. ShowClusters produces quick matplotlib plots that overlay the closest pair and shade the active regions. Small dataclasses named Cluster, PairInfo, and KadaneOutput keep results tidy and readable.
+Everything is in a single file called `Ali – CMPSC 463 – Project 1.py`. The data is loaded and trimmed by `LoadAbpSegmentsFromMat` which reads ABP from the Subset group inside the mat file and makes sure every segment has the same length. `NormalizeSegments` performs a z score per segment so that distance calculations are fair. The program measures similarity with correlation distance by default and also includes a simple DTW option for small tests. The divide and conquer clustering is implemented by `SplitCluster`, `RecursiveCluster`, and `RunClustering` which repeatedly split groups until they reach size or depth limits. Inside each final cluster the function `FindClosestPair` searches for the most similar pair which is used as a quick cohesion check and as a representative example. To find where a signal is most active the code runs Kadane on the first difference using Kadane and `GetActivePart`. `ShowClusters` produces quick matplotlib plots that overlay the closest pair and shade the active regions. Small `dataclasses` named `Cluster`, `PairInfo`, and `KadaneOutput` keep results tidy and readable.
 
 ## Description of Algorithms
 
