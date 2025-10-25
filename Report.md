@@ -25,6 +25,11 @@ Save the file and run it from a terminal with python `Ali - CMPSC 463 – Projec
 
 Everything is in a single file called `Ali – CMPSC 463 – Project 1.py`. The data is loaded and trimmed by `LoadAbpSegmentsFromMat` which reads ABP from the Subset group inside the mat file and makes sure every segment has the same length. `NormalizeSegments` performs a z score per segment so that distance calculations are fair. The program measures similarity with correlation distance by default and also includes a simple DTW option for small tests. The divide and conquer clustering is implemented by `SplitCluster`, `RecursiveCluster`, and `RunClustering` which repeatedly split groups until they reach size or depth limits. Inside each final cluster the function `FindClosestPair` searches for the most similar pair which is used as a quick cohesion check and as a representative example. To find where a signal is most active the code runs Kadane on the first difference using Kadane and `GetActivePart`. `ShowClusters` produces quick matplotlib plots that overlay the closest pair and shade the active regions. Small `dataclasses` named `Cluster`, `PairInfo`, and `KadaneOutput` keep results tidy and readable.
 
+### Class Summaries
+`Cluster` stores the indices of the signals that belong to a final cluster.  
+`PairInfo` holds the pair of indices inside a cluster that are most similar, plus their distance.  
+`KadaneOutput` records the start index, end index, and sum for the maximum subarray on the first difference of a signal.
+
 ## Description of Algorithms
 
 The divide and conquer clustering starts with all segments in one group. It chooses two seeds that are far apart and assigns every segment to the seed it is closer to. It then recurses on each side until the groups are small enough or a maximum recursion depth is reached. The closest pair search inside each cluster compares all pairs and keeps the minimum distance which serves as a simple cohesion measure and helps pick a representative pair. Kadane’s algorithm runs on the first difference of each segment and returns the contiguous interval with the largest cumulative change. This interval often aligns with physiologically meaningful events such as sharp upstrokes or strong peaks in ABP, which helps explain why certain segments belong together.
