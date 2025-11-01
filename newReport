@@ -42,9 +42,57 @@ The project includes a small toy mode that fabricates a few short signals such a
 
 When run on up to one thousand ABP segments of about six hundred twenty five samples each, the program loads and normalizes the data, performs the recursive clustering using correlation distance, and forms roughly twenty or more clusters depending on the distribution. The console prints a table for the first few clusters that includes mean, minimum, and maximum intra cluster distances which offers a quick view of cohesion. It also prints a few Kadane intervals for sample segments and shows one or two plots with the closest pair overlaid and active spans shaded. Typical output begins with a message similar to Loaded 1000 segments with 625 samples each followed by a line such as Made 22 clusters and a short list of example cluster sizes. These results show that the approach runs quickly and produces interpretable groups.
 
-## Discussion on Execution Results
+## Sample Scenarios and Generalization
 
-The clusters line up well with the visual appearance of the waveforms. Segments that share similar ABP shapes tend to land in the same group, and the smallest pair distances inside those groups are low which supports cluster cohesion. The activity windows found by Kadane usually align with fast rises and peaks which helps explain the grouping. Correlation distance is fast and works well when heartbeats are roughly aligned. DTW is available but slower and is best reserved for smaller trials. The main limitations are the simple two seed split which can create uneven groups in some edge cases and a basic stopping rule that uses fixed size and depth rather than an adaptive score. Future improvements could add a silhouette style stopping rule, better seeding, and optional support for other signals such as ECG or PPG.
+To show flexibility, the same pipeline was tested on short stock-like time series that simulate gradual trends and sudden jumps. The divide-and-conquer algorithm grouped similar trend patterns, and Kadane’s algorithm detected spikes as high-activity intervals. This demonstrates that the method generalizes beyond biomedical data, handling anomaly detection and trend analysis tasks with minimal adjustment.
+
+## Execution Results with 1000 Time Series
+
+When run on up to one thousand ABP segments (≈625 samples each), the program:
+
+Loads and normalizes all data.
+
+Performs recursive clustering using correlation distance.
+
+Forms roughly 20–25 clusters depending on the distribution.
+
+Example output:
+``` python
+Loaded 1000 segments with 625 samples each
+Made 22 clusters
+Cluster 1: meanDist=0.12  min=0.05  max=0.24
+Cluster 2: meanDist=0.14  min=0.06  max=0.28
+```
+
+
+The program also displays several plots overlaying the closest pair per cluster and shading active intervals.
+
+# Examples:
+
+<img width="1290" height="942" alt="image" src="https://github.com/user-attachments/assets/5b26b69a-b3f5-44d9-962a-0fd701c44aa9" />
+
+<img width="448" height="316" alt="image" src="https://github.com/user-attachments/assets/911fdcfc-619c-4c88-bc97-57aedd33ce5d" />
+
+<img width="1986" height="802" alt="image" src="https://github.com/user-attachments/assets/8b0d442f-f796-497a-8732-396b23fe5e8e" />
+
+<img width="1998" height="778" alt="image" src="https://github.com/user-attachments/assets/e27480cd-03fd-4e30-98f6-d432d2d9336d" />
+
+
+The clusters align closely with waveform shapes. Segments with similar ABP patterns group together, and their lowest pairwise distances confirm strong cohesion. Kadane’s intervals usually capture systolic peaks, helping to explain cluster assignments. Correlation distance works efficiently for aligned signals; DTW offers flexibility for misaligned cases but is slower.
+
+The main limitations are:
+
+- The simple two-seed split may cause uneven cluster sizes in some cases.
+
+- Stopping conditions are fixed rather than adaptive.
+
+Future improvements:
+
+- Add silhouette-based stopping criteria.
+
+- Improve seed selection via k-means++ style initialization.
+
+- Extend compatibility to ECG and PPG data for multimodal analysis.
 
 ## Conclusions
 
