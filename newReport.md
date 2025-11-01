@@ -8,6 +8,12 @@
 This project clusters and analyzes short biomedical time-series segments from the PulseDB dataset using plain algorithms rather than machine learning. The focus is on ten second Arterial Blood Pressure segments. The pipeline loads the data, normalizes each segment, groups similar segments using a divide and conquer strategy, checks cluster cohesion by finding the most similar pair inside each cluster, and highlights the most active interval within each segment using Kadane’s algorithm on the first difference. The goal is to show that straightforward algorithmic reasoning can produce clear and explainable results on physiological signals without relying on heavy libraries.
 
 
+## Data Type Considerations (ABP Signals)
+
+This project focuses on **Arterial Blood Pressure (ABP)** signals from the PulseDB dataset. Each segment represents 10 seconds of continuous waveform data with approximately 625 samples. ABP signals are ideal for time-series clustering because they have periodic peaks corresponding to heartbeats and contain informative variations in amplitude and slope.
+
+Before clustering, each segment is normalized using **z-score normalization** to ensure that similarity comparisons are based on waveform shape rather than absolute pressure values. This normalization step is essential for fair distance computation across subjects. Because biomedical signals may include small noise or baseline drifts, a light smoothing step may optionally be applied, but the focus remains on algorithmic clarity rather than preprocessing complexity.
+
 
 ## Installation and Usage
 
@@ -30,6 +36,22 @@ Everything is in a single file called `Ali – CMPSC 463 – Project 1.py`. The 
 `PairInfo` holds the pair of indices inside a cluster that are most similar, plus their distance.  
 `KadaneOutput` records the start index, end index, and sum for the maximum subarray on the first difference of a signal.
 
+### Function and Class Summary
+
+| **Name** | **Type** | **Purpose** |
+|-----------|-----------|-------------|
+| `LoadAbpSegmentsFromMat` | Function | Reads ABP segments from the `.mat` file and ensures consistent length. |
+| `NormalizeSegments` | Function | Applies z-score normalization to each segment for fair distance comparison. |
+| `SplitCluster`, `RecursiveCluster`, `RunClustering` | Functions | Implement the divide-and-conquer clustering process. |
+| `FindClosestPair` | Function | Finds the most similar pair of signals within each cluster using correlation distance. |
+| `Kadane` | Function | Runs Kadane’s algorithm on the first difference to find the most active subinterval. |
+| `GetActivePart` | Function | Retrieves indices for the interval of maximum cumulative change. |
+| `ShowClusters` | Function | Generates matplotlib plots for visualization of clusters and active intervals. |
+| `Cluster` | Dataclass | Stores indices of signals belonging to a final cluster. |
+| `PairInfo` | Dataclass | Records the closest pair indices and their distance. |
+| `KadaneOutput` | Dataclass | Stores start, end, and sum for the maximum subarray segment. |
+
+
 ## Description of Algorithms
 
 The divide and conquer clustering starts with all segments in one group. It chooses two seeds that are far apart and assigns every segment to the seed it is closer to. It then recurses on each side until the groups are small enough or a maximum recursion depth is reached. The closest pair search inside each cluster compares all pairs and keeps the minimum distance which serves as a simple cohesion measure and helps pick a representative pair. Kadane’s algorithm runs on the first difference of each segment and returns the contiguous interval with the largest cumulative change. This interval often aligns with physiologically meaningful events such as sharp upstrokes or strong peaks in ABP, which helps explain why certain segments belong together.
@@ -38,9 +60,6 @@ The divide and conquer clustering starts with all segments in one group. It choo
 
 The project includes a small toy mode that fabricates a few short signals such as sinusoids with slight phase shifts, a faster sinusoid, a scaled version, a flat signal, and a copy with a brief spike. Running the pipeline on this set shows that the divide and conquer split places similar shapes together, the closest pair is chosen sensibly, and Kadane highlights the expected high activity region on the spiky signal. This quick check confirms that the implementation behaves sensibly before using the real dataset.
 
-## Execution Results with 1000 Time Series
-
-When run on up to one thousand ABP segments of about six hundred twenty five samples each, the program loads and normalizes the data, performs the recursive clustering using correlation distance, and forms roughly twenty or more clusters depending on the distribution. The console prints a table for the first few clusters that includes mean, minimum, and maximum intra cluster distances which offers a quick view of cohesion. It also prints a few Kadane intervals for sample segments and shows one or two plots with the closest pair overlaid and active spans shaded. Typical output begins with a message similar to Loaded 1000 segments with 625 samples each followed by a line such as Made 22 clusters and a short list of example cluster sizes. These results show that the approach runs quickly and produces interpretable groups.
 
 ## Sample Scenarios and Generalization
 
@@ -50,11 +69,11 @@ To show flexibility, the same pipeline was tested on short stock-like time serie
 
 When run on up to one thousand ABP segments (≈625 samples each), the program:
 
-Loads and normalizes all data.
+- Loads and normalizes all data
 
-Performs recursive clustering using correlation distance.
+- Performs recursive clustering using correlation distance
 
-Forms roughly 20–25 clusters depending on the distribution.
+- Forms roughly 20–25 clusters depending on the distribution
 
 Example output:
 ``` python
@@ -67,26 +86,35 @@ Cluster 2: meanDist=0.14  min=0.06  max=0.28
 
 The program also displays several plots overlaying the closest pair per cluster and shading active intervals.
 
-# Examples:
+### Examples:
+
+**Figure 1.** Example console output showing clustering results for 1000 ABP segments.
 
 <img width="1290" height="942" alt="image" src="https://github.com/user-attachments/assets/5b26b69a-b3f5-44d9-962a-0fd701c44aa9" />
 
+**Figure 2.** Overlay of two ABP signals from the same cluster with active intervals shaded.
+
 <img width="448" height="316" alt="image" src="https://github.com/user-attachments/assets/911fdcfc-619c-4c88-bc97-57aedd33ce5d" />
+
+**Figure 3.** Example of cluster visualization showing cohesion among waveform shapes.
 
 <img width="1986" height="802" alt="image" src="https://github.com/user-attachments/assets/8b0d442f-f796-497a-8732-396b23fe5e8e" />
 
+**Figure 4.** Example of waveform highlighting using Kadane’s algorithm on the first difference.
+
 <img width="1998" height="778" alt="image" src="https://github.com/user-attachments/assets/e27480cd-03fd-4e30-98f6-d432d2d9336d" />
 
+### Discussion of Results
 
 The clusters align closely with waveform shapes. Segments with similar ABP patterns group together, and their lowest pairwise distances confirm strong cohesion. Kadane’s intervals usually capture systolic peaks, helping to explain cluster assignments. Correlation distance works efficiently for aligned signals; DTW offers flexibility for misaligned cases but is slower.
 
-The main limitations are:
+#### The main limitations are:
 
 - The simple two-seed split may cause uneven cluster sizes in some cases.
 
 - Stopping conditions are fixed rather than adaptive.
 
-Future improvements:
+#### Future improvements:
 
 - Add silhouette-based stopping criteria.
 
@@ -99,6 +127,9 @@ Future improvements:
 This project shows that a straightforward algorithmic pipeline can cluster and explain biomedical time-series data without any machine learning. Divide and conquer clustering groups similar segments, the closest pair search provides an easy cohesion check and a clear example to inspect, and Kadane highlights where each signal is most active. The system is simple, fast, and easy to understand which makes it a solid demonstration of classical algorithms applied to real physiological data.
 
 ## Block Diagram
+
+Block diagram of the PulseDB time-series clustering pipeline:
+
 ```mermaid
 flowchart TD
     A[Load .mat ABP] --> B[Normalize]
